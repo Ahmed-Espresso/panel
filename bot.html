@@ -31,6 +31,8 @@
   </header>
 
 <div class="container">
+  <div id="messageBox" class="message-box"></div>
+  
   <section class="form-container">
     <h1><i class="fas fa-comments"></i> إدارة ردود الروبوت</h1>
     <form id="responseForm">
@@ -127,6 +129,7 @@
     const form       = document.getElementById('responseForm');
     const cancelBtn  = document.getElementById('cancelResponseEdit');
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const msgBox     = document.getElementById('messageBox');
     let editKey = null;
 
     // render table
@@ -171,15 +174,21 @@
         keywords: document.getElementById('botKeywords').value
                   .split(',').map(k=>k.trim()).filter(Boolean)
       };
-      // push or set
-      if (editKey) {
-        await set(child(responsesRef, editKey), payload);
-        Swal.fire('تم التحديث','✅','success');
-      } else {
-        await push(responsesRef, payload);
-        Swal.fire('تم الإضافة','🎉','success');
+      
+      try {
+        if (editKey) {
+          await set(child(responsesRef, editKey), payload);
+          showMessage('تم تحديث الرد بنجاح', 'success');
+        } else {
+          await push(responsesRef, payload);
+          showMessage('تم إضافة الرد بنجاح', 'success');
+        }
+        form.reset(); 
+        cancelBtn.style.display='none'; 
+        editKey=null;
+      } catch (error) {
+        showMessage('حدث خطأ أثناء الحفظ: ' + error.message, 'error');
       }
-      form.reset(); cancelBtn.style.display='none'; editKey=null;
     });
 
     // start edit
@@ -199,23 +208,19 @@
 
     // delete
     window.confirmDelete = key => {
-      Swal.fire({
-        title: 'تأكيد الحذف؟',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'نعم',
-        cancelButtonText: 'إلغاء'
-      }).then(res => {
-        if (res.isConfirmed) {
-          remove(child(responsesRef, key));
-          Swal.fire('تم الحذف','✅','success');
-        }
-      });
+      if(confirm('هل أنت متأكد من حذف هذا الرد؟')) {
+        remove(child(responsesRef, key))
+          .then(() => showMessage('تم حذف الرد بنجاح', 'success'))
+          .catch(error => showMessage('حدث خطأ أثناء الحذف: ' + error.message, 'error'));
+      }
     };
 
     // cancel edit
     cancelBtn.addEventListener('click', ()=> {
-      form.reset(); cancelBtn.style.display='none'; editKey=null;
+      form.reset(); 
+      cancelBtn.style.display='none'; 
+      editKey=null;
+      showMessage('تم إلغاء التعديل', 'info');
     });
 
     // filtering
@@ -231,6 +236,17 @@
           });
       });
     });
+    
+    // Show message function
+    function showMessage(message, type = 'success') {
+      msgBox.textContent = message;
+      msgBox.className = `message-box ${type}`;
+      
+      setTimeout(() => {
+        msgBox.textContent = '';
+        msgBox.className = 'message-box';
+      }, 5000);
+    }
   </script>
   <script>
     // كود JavaScript لتمييز الصفحة النشطة
