@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - الإحصائيات</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="form-container">
+      <h1><i class="fas fa-chart-line"></i> إدارة الإحصائيات</h1>
+      <form id="statForm">
+        <div class="form-group">
+          <label for="statLabelAr">التسمية (عربي):</label>
+          <input type="text" id="statLabelAr" class="form-control" placeholder="مثل: عملاء راضون" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="statLabelEn">التسمية (إنجليزي):</label>
+          <input type="text" id="statLabelEn" class="form-control" placeholder="e.g. Satisfied Clients" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="statValue">القيمة:</label>
+          <input type="number" id="statValue" class="form-control" min="0" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="statUnit">الوحدة:</label>
+          <input type="text" id="statUnit" class="form-control" placeholder="+ / %" maxlength="3">
+        </div>
+        
+        <div class="form-group">
+          <label for="statColor">لون العرض:</label>
+          <input type="color" id="statColor" class="form-control" value="#3498db" required>
+        </div>
+        
+        <div class="form-group">
+          <label>اختر الأيقونة:</label>
+          <div class="icon-picker">
+            <span class="icon-option" data-icon="fas fa-users"><i class="fas fa-users"></i></span>
+            <span class="icon-option" data-icon="fas fa-box"><i class="fas fa-box"></i></span>
+            <span class="icon-option" data-icon="fas fa-star"><i class="fas fa-star"></i></span>
+            <span class="icon-option" data-icon="fas fa-globe"><i class="fas fa-globe"></i></span>
+            <span class="icon-option" data-icon="fas fa-truck"><i class="fas fa-truck"></i></span>
+            <span class="icon-option" data-icon="fas fa-award"><i class="fas fa-award"></i></span>
+          </div>
+          <input type="hidden" id="statIcon" required>
+        </div>
+        
+        <div class="form-group">
+          <label><input type="checkbox" id="statVisible" class="form-control" checked> عرض</label>
+        </div>
+
+        <div class="form-group">
+          <label for="statOrder">ترتيب العرض:</label>
+          <input type="number" id="statOrder" class="form-control" min="1" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+          <button type="button" id="cancelStatEdit" class="btn btn-secondary" style="display:none;"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-container">
+      <h2><i class="fas fa-list"></i> الإحصائيات الحالية</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>الأيقونة</th>
+            <th>التسمية (عربي)</th>
+            <th>التسمية (إنجليزي)</th>
+            <th>القيمة</th>
+            <th>الوحدة</th>
+            <th>اللون</th>
+            <th>الترتيب</th>
+            <th>عرض</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="statsList"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      push,
+      onValue,
+      update,
+      remove,
+      get,
+      child
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const statsRef = ref(db, 'storestats');
+
+    let currentKey = null;
+    const form = document.getElementById('statForm');
+    const cancelBtn = document.getElementById('cancelStatEdit');
+
+    // Icon picker
+    const iconOptions = document.querySelectorAll('.icon-option');
+    iconOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        iconOptions.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        document.getElementById('statIcon').value = opt.dataset.icon;
+      });
+    });
+
+    // Render table
+    function renderTable() {
+      onValue(statsRef, snap => {
+        const data = snap.val() || {};
+        const tbody = document.querySelector('#statsList');
+        tbody.innerHTML = '';
+        Object.entries(data)
+          .sort((a,b) => (a[1].order||0) - (b[1].order||0))
+          .forEach(([key, s]) => {
+            tbody.innerHTML += `
+              <tr>
+                <td><i class="${s.icon}"></i></td>
+                <td>${s.label.ar}</td>
+                <td>${s.label.en}</td>
+                <td>${s.value}</td>
+                <td>${s.unit||''}</td>
+                <td>
+                  <span style="background:${s.color};
+                               display:inline-block;width:20px;height:20px;
+                               border-radius:4px;"></span>
+                  ${s.color}
+                </td>
+                <td>${s.order}</td>
+                <td>${s.visible? '✅':'❌'}</td>
+                <td>
+                  <button  class="btn btn-secondary" onclick="editStat('${key}')"><i class="fas fa-edit"></i></button>
+                  <button  class="btn btn-danger" onclick="deleteStat('${key}')"><i class="fas fa-trash"></i></button>
+                </td>
+              </tr>`;
+          });
+      });
+    }
+
+    // Edit
+    window.editStat = async key => {
+      const snap = await get(child(statsRef, key));
+      const s = snap.val();
+      document.getElementById('statIcon').value      = s.icon;
+      iconOptions.forEach(o => o.classList.toggle('selected', o.dataset.icon === s.icon));
+      document.getElementById('statLabelAr').value   = s.label.ar;
+      document.getElementById('statLabelEn').value   = s.label.en;
+      document.getElementById('statValue').value     = s.value;
+      document.getElementById('statUnit').value      = s.unit||'';
+      document.getElementById('statColor').value     = s.color;
+      document.getElementById('statVisible').checked = !!s.visible;
+      document.getElementById('statOrder').value     = s.order;
+      currentKey = key;
+      cancelBtn.style.display = 'inline-block';
+    };
+
+    // Delete
+    window.deleteStat = key => {
+      if (confirm('هل أنت متأكد من الحذف؟')) {
+        remove(child(statsRef, key));
+      }
+    };
+
+    // Submit
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        icon: document.getElementById('statIcon').value,
+        label: {
+          ar: document.getElementById('statLabelAr').value.trim(),
+          en: document.getElementById('statLabelEn').value.trim()
+        },
+        value: parseInt(document.getElementById('statValue').value),
+        unit: document.getElementById('statUnit').value.trim(),
+        color: document.getElementById('statColor').value,
+        visible: document.getElementById('statVisible').checked,
+        order: parseInt(document.getElementById('statOrder').value)
+      };
+      if (currentKey) {
+        await update(child(statsRef, currentKey), payload);
+      } else {
+        await push(statsRef, payload);
+      }
+      resetForm();
+    });
+
+    cancelBtn.addEventListener('click', resetForm);
+
+    function resetForm() {
+      form.reset();
+      iconOptions.forEach(o => o.classList.remove('selected'));
+      currentKey = null;
+      cancelBtn.style.display = 'none';
+    }
+
+    // init
+    renderTable();
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

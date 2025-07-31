@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - التواصل</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="form-container">
+      <h1><i class="fas fa-link"></i> إدارة قنوات التواصل</h1>
+      <form id="contactForm">
+        <div class="form-group">
+          <label for="contactNameAr">اسم القناة (عربي):</label>
+          <input type="text" id="contactNameAr" class="form-control" placeholder="مثل: واتساب" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="contactNameEn">اسم القناة (إنجليزي):</label>
+          <input type="text" id="contactNameEn" class="form-control" placeholder="e.g. WhatsApp" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="contactLink">الرابط:</label>
+          <input type="url" id="contactLink" class="form-control" placeholder="https://wa.me/..." required>
+        </div>
+        
+        <div class="form-group">
+          <label>اختر الأيقونة:</label>
+          <div class="icon-picker">
+            <span class="icon-option" data-icon="fab fa-whatsapp"><i class="fab fa-whatsapp"></i></span>
+            <span class="icon-option" data-icon="fab fa-facebook"><i class="fab fa-facebook"></i></span>
+            <span class="icon-option" data-icon="fab fa-instagram"><i class="fab fa-instagram"></i></span>
+            <span class="icon-option" data-icon="fab fa-twitter"><i class="fab fa-twitter"></i></span>
+            <span class="icon-option" data-icon="fab fa-youtube"><i class="fab fa-youtube"></i></span>
+            <span class="icon-option" data-icon="fab fa-tiktok"><i class="fab fa-tiktok"></i></span>
+            <span class="icon-option" data-icon="fas fa-envelope"><i class="fas fa-envelope"></i></span>
+            <span class="icon-option" data-icon="fas fa-phone"><i class="fas fa-phone"></i></span>
+          </div>
+          <input type="hidden" id="contactIcon" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="contactOrder">ترتيب العرض:</label>
+          <input type="number" id="contactOrder" class="form-control" min="1" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ</button>
+          <button type="button" id="cancelContactEdit" class="btn btn-secondary" style="display:none;"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-container">
+      <h2><i class="fas fa-list"></i> قنوات التواصل الحالية</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>الأيقونة</th>
+            <th>الاسم (عربي)</th>
+            <th>الاسم (إنجليزي)</th>
+            <th>الرابط</th>
+            <th>الترتيب</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="contactsList"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getDatabase, ref, push, onValue, 
+      update, remove, child, get 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      authDomain: "realestate-d4e29.firebaseapp.com",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    
+    const app = initializeApp(firebaseConfig);  
+    const db = getDatabase(app);
+    const contactRef = ref(db, 'storeContactInfo');
+
+    const form = document.getElementById('contactForm');
+    const contactsList = document.getElementById('contactsList');
+    const cancelBtn = document.getElementById('cancelContactEdit');
+    let currentContactKey = null;
+
+    // Default brand colors
+    const defaultColors = {
+      'fab fa-whatsapp': '#25D366',
+      'fab fa-facebook': '#1877F2',
+      'fab fa-instagram': '#E4405F',
+      'fab fa-twitter': '#1DA1F2',
+      'fab fa-youtube': '#FF0000',
+      'fab fa-tiktok': '#000000',
+      'fas fa-envelope': '#D14836',
+      'fas fa-phone': '#34B7F1'
+    };
+
+    // Icon picker logic
+    document.querySelectorAll('.icon-picker .icon-option').forEach(opt => {
+      const icon = opt.dataset.icon;
+      opt.querySelector('i').style.color = defaultColors[icon] || '#000';
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        document.getElementById('contactIcon').value = icon;
+      });
+    });
+
+    // Render contacts
+    function renderContacts(snapshot) {
+      contactsList.innerHTML = '';
+      const contacts = snapshot.val() || {};
+
+      Object.entries(contacts).forEach(([key, contact]) => {
+        const color = defaultColors[contact.icon] || '#000';
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><i class="${contact.icon}" style="color:${color}; font-size: 1.5rem;"></i></td>
+          <td>${contact.name.ar}</td>
+          <td>${contact.name.en}</td>
+          <td><a href="${contact.link}" target="_blank">${contact.link.slice(0, 30)}...</a></td>
+          <td>${contact.order}</td>
+          <td>
+            <button class="btn btn-secondary" onclick="editContact('${key}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger" onclick="deleteContact('${key}')"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        contactsList.appendChild(row);
+      });
+    }
+
+    onValue(contactRef, renderContacts);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const contactData = {
+        name: {
+          ar: document.getElementById('contactNameAr').value.trim(),
+          en: document.getElementById('contactNameEn').value.trim()
+        },
+        link: document.getElementById('contactLink').value.trim(),
+        icon: document.getElementById('contactIcon').value,
+        order: parseInt(document.getElementById('contactOrder').value)
+      };
+
+      try {
+        if (currentContactKey) {
+          await update(child(contactRef, currentContactKey), contactData);
+        } else {
+          await push(contactRef, contactData);
+        }
+        resetForm();
+      } catch (error) {
+        alert(`حدث خطأ: ${error.message}`);
+      }
+    });
+
+    window.editContact = async (key) => {
+      const snapshot = await get(child(contactRef, key));
+      const contact = snapshot.val();
+
+      document.getElementById('contactNameAr').value = contact.name.ar;
+      document.getElementById('contactNameEn').value = contact.name.en;
+      document.getElementById('contactLink').value = contact.link;
+      document.getElementById('contactIcon').value = contact.icon;
+      document.getElementById('contactOrder').value = contact.order;
+      
+      document.querySelectorAll('.icon-option').forEach(o => {
+        o.classList.toggle('selected', o.dataset.icon === contact.icon);
+      });
+      
+      currentContactKey = key;
+      cancelBtn.style.display = 'inline-block';
+    };
+
+    window.deleteContact = async (key) => {
+      if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
+        await remove(child(contactRef, key));
+      }
+    };
+
+    function resetForm() {
+      form.reset();
+      document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+      currentContactKey = null;
+      cancelBtn.style.display = 'none';
+    }
+
+    cancelBtn.addEventListener('click', resetForm);
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

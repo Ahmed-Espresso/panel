@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - الأسئلة الشائعة</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="form-container">
+      <h1><i class="bi bi-question-circle-fill"></i> إدارة الأسئلة الشائعة</h1>
+      <form id="faqForm">
+        <div class="form-group">
+          <label for="faqQuestionAr">السؤال (عربي):</label>
+          <input type="text" id="faqQuestionAr" class="form-control" placeholder="مثل: ما هي فترة الضمان؟" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="faqQuestionEn">السؤال (إنجليزي):</label>
+          <input type="text" id="faqQuestionEn" class="form-control" placeholder="e.g. What is the warranty period?" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="faqAnswerAr">الإجابة (عربي):</label>
+          <textarea id="faqAnswerAr" class="form-control" rows="3" placeholder="الإجابة التفصيلية..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="faqAnswerEn">الإجابة (إنجليزي):</label>
+          <textarea id="faqAnswerEn" class="form-control" rows="3" placeholder="Detailed answer..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="faqOrder">ترتيب العرض:</label>
+          <input type="number" id="faqOrder" class="form-control" min="1" value="1" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="faqColor">لون العرض:</label>
+          <input type="color" id="faqColor" class="form-control" value="#3498db" required>
+        </div>
+        
+        <div class="form-group">
+          <label>اختر الأيقونة:</label>
+          <div class="icon-picker">
+            <span class="icon-option" data-icon="fas fa-question"><i class="fas fa-question"></i></span>
+            <span class="icon-option" data-icon="fas fa-info-circle"><i class="fas fa-info-circle"></i></span>
+            <span class="icon-option" data-icon="fas fa-truck"><i class="fas fa-truck"></i></span>
+            <span class="icon-option" data-icon="fas fa-shield-alt"><i class="fas fa-shield-alt"></i></span>
+            <span class="icon-option" data-icon="fas fa-credit-card"><i class="fas fa-credit-card"></i></span>
+            <span class="icon-option" data-icon="fas fa-sync"><i class="fas fa-sync"></i></span>
+          </div>
+          <input type="hidden" id="faqIcon" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ السؤال</button>
+          <button type="button" id="cancelFaqEdit" class="btn btn-secondary" style="display:none;"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-container">
+      <h2><i class="fas fa-list"></i> الأسئلة الشائعة</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>السؤال</th>
+            <th>الإجابة</th>
+            <th>الأيقونة</th>
+            <th>اللون</th>
+            <th>الترتيب</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="faqList"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getDatabase, ref, push, onValue, 
+      update, remove, child, get 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      authDomain: "realestate-d4e29.firebaseapp.com",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    
+    const app = initializeApp(firebaseConfig);  
+    const db = getDatabase(app);
+    const faqRef = ref(db, 'storeFaqs');
+
+    const form = document.getElementById('faqForm');
+    const faqList = document.getElementById('faqList');
+    const cancelBtn = document.getElementById('cancelFaqEdit');
+    let currentFaqKey = null;
+
+    // Icon picker logic
+    document.querySelectorAll('.icon-picker .icon-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        document.getElementById('faqIcon').value = opt.dataset.icon;
+      });
+    });
+
+    // Render FAQs
+    function renderFaqs(snapshot) {
+      faqList.innerHTML = '';
+      const faqs = snapshot.val() || {};
+
+      Object.entries(faqs).forEach(([key, faq]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${faq.question.ar}</td>
+          <td>${faq.answer.ar.slice(0, 50)}...</td>
+          <td><i class="${faq.icon}" style="color:${faq.color}; font-size: 1.5rem;"></i></td>
+          <td><span class="color-preview" style="background:${faq.color}"></span> ${faq.color}</td>
+          <td>${faq.order}</td>
+          <td>
+            <button class="btn btn-secondary" onclick="editFaq('${key}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger" onclick="deleteFaq('${key}')"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        faqList.appendChild(row);
+      });
+    }
+
+    onValue(faqRef, renderFaqs);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const faqData = {
+        question: {
+          ar: document.getElementById('faqQuestionAr').value.trim(),
+          en: document.getElementById('faqQuestionEn').value.trim()
+        },
+        answer: {
+          ar: document.getElementById('faqAnswerAr').value.trim(),
+          en: document.getElementById('faqAnswerEn').value.trim()
+        },
+        order: parseInt(document.getElementById('faqOrder').value),
+        color: document.getElementById('faqColor').value,
+        icon: document.getElementById('faqIcon').value
+      };
+
+      try {
+        if (currentFaqKey) {
+          await update(child(faqRef, currentFaqKey), faqData);
+        } else {
+          await push(faqRef, faqData);
+        }
+        resetForm();
+      } catch (error) {
+        alert(`حدث خطأ: ${error.message}`);
+      }
+    });
+
+    window.editFaq = async (key) => {
+      const snapshot = await get(child(faqRef, key));
+      const faq = snapshot.val();
+
+      document.getElementById('faqQuestionAr').value = faq.question.ar;
+      document.getElementById('faqQuestionEn').value = faq.question.en;
+      document.getElementById('faqAnswerAr').value = faq.answer.ar;
+      document.getElementById('faqAnswerEn').value = faq.answer.en;
+      document.getElementById('faqOrder').value = faq.order;
+      document.getElementById('faqColor').value = faq.color;
+      document.getElementById('faqIcon').value = faq.icon;
+      
+      document.querySelectorAll('.icon-option').forEach(o => {
+        o.classList.toggle('selected', o.dataset.icon === faq.icon);
+      });
+      
+      currentFaqKey = key;
+      cancelBtn.style.display = 'inline-block';
+    };
+
+    window.deleteFaq = async (key) => {
+      if (confirm('هل أنت متأكد من حذف هذا السؤال؟')) {
+        await remove(child(faqRef, key));
+      }
+    };
+
+    function resetForm() {
+      form.reset();
+      document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('selected'));
+      document.getElementById('faqColor').value = '#3498db';
+      currentFaqKey = null;
+      cancelBtn.style.display = 'none';
+    }
+
+    cancelBtn.addEventListener('click', resetForm);
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

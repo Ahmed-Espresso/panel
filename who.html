@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - من نحن</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+       <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="form-container">
+      <h1><i class="bi bi-book-half"></i>إدارة محتوى "قصتنا"</h1>
+      <form id="aboutForm">
+        <div class="form-group">
+          <label for="aboutAr">المحتوى (عربي):</label>
+          <textarea id="aboutAr" class="form-control" rows="6" placeholder="أدخل النص بالعربية" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="aboutEn">Content (English):</label>
+          <textarea id="aboutEn" class="form-control" rows="6" placeholder="Enter text in English" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ المحتوى</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      authDomain: "realestate-d4e29.firebaseapp.com",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+    const aboutRef = ref(db, 'storeAboutUs');
+    let aboutKey = null;
+
+    onValue(aboutRef, snapshot => {
+      const data = snapshot.val() || {};
+      const key = Object.keys(data)[0];
+      if (key) {
+        aboutKey = key;
+        const content = data[key].content || {};
+        document.getElementById('aboutAr').value = content.ar || '';
+        document.getElementById('aboutEn').value = content.en || '';
+      }
+    });
+
+    document.getElementById('aboutForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const payload = {
+        content: {
+          ar: document.getElementById('aboutAr').value.trim(),
+          en: document.getElementById('aboutEn').value.trim()
+        }
+      };
+      
+      if (aboutKey) {
+        update(ref(db, `storeAboutUs/${aboutKey}`), payload)
+          .then(() => alert('✅ تم تحديث المحتوى بنجاح'))
+          .catch(err => alert('❌ خطأ أثناء الحفظ: ' + err.message));
+      } else {
+        push(aboutRef, payload)
+          .then(() => alert('✅ تم إضافة المحتوى بنجاح'))
+          .catch(err => alert('❌ خطأ أثناء الحفظ: ' + err.message));
+      }
+    });
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

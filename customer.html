@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - التواصل السريع</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+ <div class="container">
+  <div class="form-container">
+     <h1><i class="fas fa-comment-dots"></i> إعدادات خدمه العملاء</h1>
+    <form id="qcForm">
+      <!-- Country Code + Local Phone -->
+      <div class="form-group">
+        <label for="qcCountryCode">كود الدولة</label>
+        <select id="qcCountryCode" class="form-control">
+          <option value="+20">+20 (مصر)</option>
+          <option value="+966">+966 (السعودية)</option>
+          <option value="+971">+971 (الإمارات)</option>
+          <option value="+1">+1 (USA)</option>
+          <option value="+44">+44 (UK)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="qcPhoneLocal">رقم الهاتف (بدون كود)</label>
+        <input type="tel" id="qcPhoneLocal" class="form-control" placeholder="مثلاً 01012345678">
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="emailAddress">الإيميل المُستقبل</label>
+        <input type="email" id="emailAddress" class="form-control" placeholder="example@mail.com">
+      </div>
+
+      <hr>
+
+      <!-- WhatsApp Button Settings -->
+      <h2>إعداد زر الواتساب</h2>
+      <div class="form-group">
+        <label>أيقونة الزر</label>
+        <div id="whatsappIconPicker" class="icon-options icon-picker">
+            <span data-icon="fa-brands fa-whatsapp"><i class="fa-brands fa-whatsapp fa-2x"></i></span>
+            <span data-icon="fa-solid fa-comment"><i class="fa-solid fa-comment fa-2x"></i></span>
+            <span data-icon="fa-brands fa-telegram"><i class="fa-brands fa-telegram fa-2x"></i></span>
+            <span data-icon="fa-solid fa-message"><i class="fa-solid fa-message fa-2x"></i></span>
+        </div>
+        <input type="hidden" id="buttonWhatsappIcon" required>
+      </div>
+      <div class="form-group lang-pair">
+        <div>
+          <label for="buttonWhatsappLabelAr">نص الزر (AR)</label>
+          <input type="text" id="buttonWhatsappLabelAr" class="form-control" placeholder="أرسل عبر واتس" required>
+        </div>
+        <div>
+          <label for="buttonWhatsappLabelEn">Button (EN)</label>
+          <input type="text" id="buttonWhatsappLabelEn" class="form-control" placeholder="Send via WhatsApp" required>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Email Button Settings -->
+      <h2>إعداد زر الإيميل</h2>
+      <div class="form-group">
+        <label>أيقونة الزر</label>
+        <div id="emailIconPicker" class="icon-options">
+          <span data-icon="fa-solid fa-envelope"><i class="fa-solid fa-envelope fa-2x"></i></span>
+          <span data-icon="fa-solid fa-paper-plane"><i class="fa-solid fa-paper-plane fa-2x"></i></span>
+          <span data-icon="fa-brands fa-google"><i class="fa-brands fa-google fa-2x"></i></span>
+          <span data-icon="fa-solid fa-at"><i class="fa-solid fa-at fa-2x"></i></span>
+        </div>
+        <input type="hidden" id="buttonEmailIcon" required>
+      </div>
+      <div class="form-group lang-pair">
+        <div>
+          <label for="buttonEmailLabelAr">نص الزر (AR)</label>
+          <input type="text" id="buttonEmailLabelAr" class="form-control" placeholder="أرسل عبر إيميل" required>
+        </div>
+        <div>
+          <label for="buttonEmailLabelEn">Button (EN)</label>
+          <input type="text" id="buttonEmailLabelEn" class="form-control" placeholder="Send via Email" required>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 حفظ الإعدادات</button>
+      </div>
+    </form>
+
+    <div id="qcMessageBox" class="message-box"></div>
+
+    <div class="current-settings">
+      <h2>الإعدادات الحالية</h2>
+      <p>📱 واتساب: <span id="currentWhatsapp">—</span></p>
+      <p>✉️ إيميل: <span id="currentEmail">—</span></p>
+      <p>🔘 زر واتساب: <i id="currentBtnWAIcon"></i> <span id="currentBtnWALabelAr"></span> / <span id="currentBtnWALabelEn"></span></p>
+      <p>🔘 زر إيميل:   <i id="currentBtnEMIcon"></i> <span id="currentBtnEMLabelAr"></span> / <span id="currentBtnEMLabelEn"></span></p>
+    </div>
+  </div>
+</div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // Firebase init
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      authDomain: "realestate-d4e29.firebaseapp.com",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+    const qcRef = ref(db, 'storeQuickContact');
+
+    // DOM
+    const form          = document.getElementById('qcForm');
+    const msgBox        = document.getElementById('qcMessageBox');
+    const countryCode   = document.getElementById('qcCountryCode');
+    const phoneLocal    = document.getElementById('qcPhoneLocal');
+    const emailInput    = document.getElementById('emailAddress');
+    const btnWAIconIn   = document.getElementById('buttonWhatsappIcon');
+    const labelWAArIn   = document.getElementById('buttonWhatsappLabelAr');
+    const labelWAEnIn   = document.getElementById('buttonWhatsappLabelEn');
+    const btnEMIconIn   = document.getElementById('buttonEmailIcon');
+    const labelEMArIn   = document.getElementById('buttonEmailLabelAr');
+    const labelEMEnIn   = document.getElementById('buttonEmailLabelEn');
+
+    // Current display
+    const curWp         = document.getElementById('currentWhatsapp');
+    const curEm         = document.getElementById('currentEmail');
+    const curWAIcon     = document.getElementById('currentBtnWAIcon');
+    const curWAArLab    = document.getElementById('currentBtnWALabelAr');
+    const curWAEnLab    = document.getElementById('currentBtnWALabelEn');
+    const curEMIcon     = document.getElementById('currentBtnEMIcon');
+    const curEMArLab    = document.getElementById('currentBtnEMLabelAr');
+    const curEMEnLab    = document.getElementById('currentBtnEMLabelEn');
+
+    // Utility
+    const onlyDigits = s => s.replace(/\D/g, '');
+
+    // Load existing
+    onValue(qcRef, snap => {
+      const d = snap.val() || {};
+
+      // phone parsing
+      let found = false;
+      Array.from(countryCode.options).forEach(o => {
+        const cd = onlyDigits(o.value);
+        if (d.whatsappNumber?.startsWith(cd)) {
+          countryCode.value = o.value;
+          phoneLocal.value  = d.whatsappNumber.slice(cd.length);
+          found = true;
+        }
+      });
+      if (!found) {
+        countryCode.value = '+20';
+        phoneLocal.value  = d.whatsappNumber || '';
+      }
+
+      emailInput.value         = d.emailAddress || '';
+      btnWAIconIn.value        = d.buttonWhatsappIcon || '';
+      labelWAArIn.value        = d.buttonWhatsappLabel?.ar || '';
+      labelWAEnIn.value        = d.buttonWhatsappLabel?.en || '';
+      btnEMIconIn.value        = d.buttonEmailIcon || '';
+      labelEMArIn.value        = d.buttonEmailLabel?.ar || '';
+      labelEMEnIn.value        = d.buttonEmailLabel?.en || '';
+
+      // icon pickers
+      document.querySelectorAll('#whatsappIconPicker span').forEach(el =>
+        el.classList.toggle('selected', el.dataset.icon === d.buttonWhatsappIcon)
+      );
+      document.querySelectorAll('#emailIconPicker span').forEach(el =>
+        el.classList.toggle('selected', el.dataset.icon === d.buttonEmailIcon)
+      );
+
+      // display
+      curWp.textContent       = d.whatsappNumber || '—';
+      curEm.textContent       = d.emailAddress || '—';
+      curWAIcon.className     = d.buttonWhatsappIcon || '';
+      curWAArLab.textContent  = d.buttonWhatsappLabel?.ar || '—';
+      curWAEnLab.textContent  = d.buttonWhatsappLabel?.en || '—';
+      curEMIcon.className     = d.buttonEmailIcon || '';
+      curEMArLab.textContent  = d.buttonEmailLabel?.ar || '—';
+      curEMEnLab.textContent  = d.buttonEmailLabel?.en || '—';
+    });
+
+    // icon pickers
+    function initPicker(id, hid) {
+      document.querySelectorAll(`#${id} span`).forEach(el => {
+        el.onclick = () => {
+          document.getElementById(hid).value = el.dataset.icon;
+          document.querySelectorAll(`#${id} span`).forEach(x => x.classList.remove('selected'));
+          el.classList.add('selected');
+        };
+      });
+    }
+    initPicker('whatsappIconPicker','buttonWhatsappIcon');
+    initPicker('emailIconPicker','buttonEmailIcon');
+
+    // submit
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      msgBox.textContent = '';
+
+      const cc   = onlyDigits(countryCode.value);
+      const loc  = onlyDigits(phoneLocal.value).replace(/^0+/, '');
+      const full = cc + loc;
+
+      if (!loc && !emailInput.value.trim()) {
+        msgBox.className = 'message-box error';
+        return msgBox.textContent = '❌ الرجاء إدخال رقم هاتف أو بريد إلكتروني';
+      }
+
+      const payload = {
+        whatsappNumber: full,
+        emailAddress:   emailInput.value.trim(),
+        buttonWhatsappIcon: btnWAIconIn.value,
+        buttonWhatsappLabel: { ar: labelWAArIn.value.trim(), en: labelWAEnIn.value.trim() },
+        buttonEmailIcon: btnEMIconIn.value,
+        buttonEmailLabel: { ar: labelEMArIn.value.trim(), en: labelEMEnIn.value.trim() }
+      };
+
+      try {
+        await update(qcRef, payload);
+        msgBox.className = 'message-box success';
+        msgBox.textContent = '✅ تم حفظ إعدادات التواصل السريع';
+      } catch (err) {
+        msgBox.className = 'message-box error';
+        msgBox.textContent = '❌ خطأ: ' + err.message;
+      }
+    });
+
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

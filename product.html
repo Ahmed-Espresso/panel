@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - إدارة المنتجات</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="form-container">
+      <h1><i class="bi bi-box-seam"></i> إدارة المنتجات</h1>
+      
+      <div id="alertMessage"></div>
+      
+      <form id="productForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="projTitleAr">اسم المنتج (عربي):</label>
+            <input type="text" id="projTitleAr" class="form-control" placeholder="مثل: ثلاجة سامسونج" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="projTitleEn">اسم المنتج (إنجليزي):</label>
+            <input type="text" id="projTitleEn" class="form-control" placeholder="e.g. Samsung Refrigerator" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="projDescAr">الوصف (عربي):</label>
+            <textarea id="projDescAr" class="form-control" rows="3" placeholder="وصف مختصر للمنتج" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="projDescEn">الوصف (إنجليزي):</label>
+            <textarea id="projDescEn" class="form-control" rows="3" placeholder="Short product description" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tagsAr">الكلمات الدلالية عربي:</label>
+            <input type="text" id="tagsAr" class="form-control" placeholder="ثلاجة, سامسونج, حديث">
+          </div>
+
+          <div class="form-group">
+            <label for="tagsEn">الكلمات الدلالية إنجليزي:</label>
+            <input type="text" id="tagsEn" class="form-control" placeholder="refrigerator, samsung, modern">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="featuresAr">المزايا عربي:</label>
+            <input type="text" id="featuresAr" class="form-control" placeholder="توفير طاقة, نظام تبريد متطور">
+          </div>
+
+          <div class="form-group">
+            <label for="featuresEn">المزايا إنجليزي:</label>
+            <input type="text" id="featuresEn" class="form-control" placeholder="energy saving, advanced cooling">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="projCategory">القسم:</label>
+            <select id="projCategory" class="form-control" required>
+              <option value="">اختر قسم...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="projPrice">السعر ($):</label>
+            <input type="number" id="projPrice" class="form-control" min="0" step="1000" required>
+          </div>
+
+          <div class="form-group">
+            <label for="projRating">التقييم (1-5):</label>
+            <input type="number" id="projRating" class="form-control" min="1" max="5">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="projColor">لون الخلفية:</label>
+            <input type="color" id="projColor" class="form-control" value="#ffffff">
+          </div>
+
+          <div class="form-group">
+            <label for="projTextColor">لون النص:</label>
+            <input type="color" id="projTextColor" class="form-control" value="#000000">
+          </div>
+
+          <div class="form-group">
+            <label for="projOrder">ترتيب العرض:</label>
+            <input type="number" id="projOrder" class="form-control" min="1" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>صور المنتج:</label>
+          
+          <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>اسحب وأفلت الصور هنا أو</p>
+            <button type="button" class="btn btn-secondary" id="browseBtn">
+              <i class="fas fa-folder-open"></i> تصفح الملفات
+            </button>
+            <input type="file" id="projImages" class="file-input" accept="image/*" multiple>
+          </div>
+          
+          <div id="imagePreview"></div>
+        </div>
+
+        <div id="uploadProgress" class="progress-container">
+          <div id="progressBar" class="progress-bar"></div>
+          <span id="progressText">0%</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ المنتج</button>
+          <button type="button" id="cancelProject" class="btn btn-secondary" style="display:none;"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-container">
+      <h2><i class="fas fa-list"></i> قائمة المنتجات</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>معاينة</th>
+            <th>الاسم</th>
+            <th>الوصف</th>
+            <th>النوع</th>
+            <th>السعر</th>
+            <th>التقييم</th>
+            <th>الكلمات الدلالية</th>
+            <th>المميزات</th>
+            <th>ترتيب</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="productsList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getDatabase, ref, push, onValue,
+      update, remove, child, get
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      authDomain: "realestate-d4e29.firebaseapp.com",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const productsRef = ref(db, 'storeProducts');
+    const categoriesRef = ref(db, 'storeCategories');
+
+    // Cloudinary Configuration
+    const CLOUDINARY_CLOUD_NAME = 'de3t3azua';
+    const CLOUDINARY_UPLOAD_PRESET = 'ml_default';
+    const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+    const CLOUDINARY_DESTROY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`;
+
+    const form = document.getElementById('productForm');
+    const cancelBtn = document.getElementById('cancelProject');
+    const productsList = document.getElementById('productsList');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const alertMessage = document.getElementById('alertMessage');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadArea = document.getElementById('uploadArea');
+    const browseBtn = document.getElementById('browseBtn');
+    const fileInput = document.getElementById('projImages');
+    
+    let currentKey = null;
+    let currentImages = [];
+    let imagesToDelete = []; // لتخزين الصور المحذوفة أثناء التعديل
+
+    // إظهار رسائل التنبيه
+    function showAlert(message, type = 'success') {
+      alertMessage.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+      
+      setTimeout(() => {
+        alertMessage.innerHTML = '';
+      }, 5000);
+    }
+
+    // تحميل الأقسام
+    async function populateCategories() {
+      try {
+        const snapshot = await get(categoriesRef);
+        const categories = snapshot.val() || {};
+        const select = document.getElementById('projCategory');
+        
+        select.innerHTML = '<option value="">اختر قسم...</option>';
+        
+        Object.entries(categories).forEach(([key, category]) => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = category.name?.ar || 'قسم غير معروف';
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('خطأ في تحميل الأقسام:', error);
+        showAlert('فشل في تحميل قائمة الأقسام', 'error');
+      }
+    }
+
+    async function uploadImages(files) {
+      uploadProgress.style.display = 'block';
+      const result = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const fd = new FormData();
+        fd.append('file', files[i]);
+        fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        
+        try {
+          const res = await fetch(CLOUDINARY_UPLOAD_URL, {
+            method: 'POST',
+            body: fd
+          });
+          
+          if (!res.ok) throw new Error('فشل رفع الصورة');
+          
+          const data = await res.json();
+          result.push({ 
+            url: data.secure_url, 
+            public_id: data.public_id,
+            alt: `صورة المنتج ${i + 1}`
+          });
+          
+          // تحديث شريط التقدم
+          const pct = Math.round(((i+1)/files.length)*100);
+          progressBar.style.width = pct + '%';
+          progressText.textContent = pct + '%';
+        } catch (error) {
+          console.error('خطأ في رفع الصور:', error);
+          showAlert('حدث خطأ أثناء رفع الصور', 'error');
+        }
+      }
+      
+      uploadProgress.style.display = 'none';
+      return result;
+    }
+
+    // حذف الصور من Cloudinary
+    async function deleteImages(images) {
+      if (!images || images.length === 0) return;
+      
+      try {
+        for (const img of images) {
+          const params = new URLSearchParams();
+          params.append('public_id', img.public_id);
+          params.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+          
+          await fetch(CLOUDINARY_DESTROY_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: params
+          });
+        }
+      } catch (error) {
+        console.error('خطأ في حذف الصور:', error);
+        showAlert('حدث خطأ أثناء حذف الصور', 'error');
+      }
+    }
+
+    // عرض معاينة الصور
+    function displayImagePreview(images) {
+      imagePreview.innerHTML = '';
+      
+      if (!images || images.length === 0) return;
+      
+      images.forEach((img, index) => {
+        const container = document.createElement('div');
+        container.className = 'preview-image';
+        
+        const imgElement = document.createElement('img');
+        imgElement.src = img.url;
+        imgElement.alt = img.alt || `صورة المنتج ${index + 1}`;
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-img';
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        deleteBtn.onclick = () => {
+          // إذا كانت الصورة مرفوعة على Cloudinary (لها public_id) نضيفها للقائمة المحذوفة
+          if (img.public_id) {
+            imagesToDelete.push(img);
+          }
+          // حذف الصورة من currentImages
+          currentImages.splice(index, 1);
+          displayImagePreview(currentImages);
+        };
+        
+        container.appendChild(imgElement);
+        container.appendChild(deleteBtn);
+        imagePreview.appendChild(container);
+      });
+    }
+
+    // إعادة تعيين النموذج
+    function resetForm() {
+      form.reset();
+      currentKey = null;
+      currentImages = [];
+      imagesToDelete = [];
+      imagePreview.innerHTML = '';
+      cancelBtn.style.display = 'none';
+    }
+
+    // تعديل منتج
+    window.editProduct = async (key) => {
+      try {
+        const snap = await get(child(productsRef, key));
+        const p = snap.val();
+        
+        // تعبئة النموذج
+        document.getElementById('projTitleAr').value = p.title?.ar || '';
+        document.getElementById('projTitleEn').value = p.title?.en || '';
+        document.getElementById('projDescAr').value = p.description?.ar || '';
+        document.getElementById('projDescEn').value = p.description?.en || '';
+        document.getElementById('projCategory').value = p.category || '';
+        document.getElementById('projPrice').value = p.price || '';
+        document.getElementById('projRating').value = p.rating || '';
+        document.getElementById('tagsAr').value = Array.isArray(p.tags?.ar) ? p.tags.ar.join(', ') : p.tags?.ar || '';
+        document.getElementById('tagsEn').value = Array.isArray(p.tags?.en) ? p.tags.en.join(', ') : p.tags?.en || '';
+        document.getElementById('featuresAr').value = Array.isArray(p.features?.ar) ? p.features.ar.join(', ') : p.features?.ar || '';
+        document.getElementById('featuresEn').value = Array.isArray(p.features?.en) ? p.features.en.join(', ') : p.features?.en || '';
+        document.getElementById('projColor').value = p.color || '#ffffff';
+        document.getElementById('projTextColor').value = p.textColor || '#000000';
+        document.getElementById('projOrder').value = p.order || 1;
+        
+        // تخزين الصور الحالية
+        currentImages = p.images || [];
+        imagesToDelete = [];
+        
+        // عرض معاينة الصور
+        displayImagePreview(currentImages);
+        
+        // إظهار زر الإلغاء
+        cancelBtn.style.display = 'inline-block';
+        currentKey = key;
+        
+        showAlert('تم تحميل بيانات المنتج للتعديل');
+      } catch (error) {
+        console.error('خطأ في تحرير المنتج:', error);
+        showAlert('حدث خطأ أثناء تحميل بيانات المنتج', 'error');
+      }
+    }
+
+    // حذف منتج
+    window.deleteProduct = async (key) => {
+      if (!confirm('هل أنت متأكد من رغبتك في حذف هذا المنتج؟ سيتم حذف الصور أيضًا.')) return;
+      
+      try {
+        const projRef = child(productsRef, key);
+        const snap = await get(projRef);
+        
+        if (!snap.exists()) {
+          showAlert('المنتج غير موجود!', 'error');
+          return;
+        }
+        
+        const data = snap.val();
+        
+        // حذف الصور من Cloudinary
+        if (data.images && data.images.length > 0) {
+          await deleteImages(data.images);
+        }
+        
+        // حذف المنتج من قاعدة البيانات
+        await remove(projRef);
+        showAlert('تم حذف المنتج بنجاح');
+        renderTable();
+      } catch (error) {
+        console.error('خطأ في حذف المنتج:', error);
+        showAlert('حدث خطأ أثناء حذف المنتج', 'error');
+      }
+    };
+
+    // عرض جدول المنتجات
+    async function renderTable() {
+      try {
+        const snapshot = await get(productsRef);
+        const products = snapshot.val() || {};
+        const categoriesSnapshot = await get(categoriesRef);
+        const categories = categoriesSnapshot.val() || {};
+        
+        productsList.innerHTML = '';
+        
+        Object.entries(products).forEach(([key, p]) => {
+          const categoryKey = p.category || '';
+          const categoryName = categories[categoryKey]?.name?.ar || 'غير مصنف';
+          
+          const title = p.title?.ar || '';
+          const desc = p.description?.ar || '';
+          
+          const tags = Array.isArray(p.tags?.ar) ? p.tags.ar : 
+            (p.tags?.ar || '').split(',').map(t => t.trim());
+          
+          const features = Array.isArray(p.features?.ar) ? p.features.ar : 
+            (p.features?.ar || '').split(',').map(f => f.trim());
+          
+          const imgs = Array.isArray(p.images) ? p.images : [];
+          
+          const preview = imgs.length > 0 ? 
+            `<img src="${imgs[0].url}" alt="${imgs[0].alt || 'معاينة'}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : 
+            '<i class="fas fa-image" style="font-size:20px;"></i>';
+          
+          const tagsHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+          const featuresHtml = features.map(feature => `<span class="feature">${feature}</span>`).join('');
+          
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${preview}</td>
+            <td>${title}</td>
+            <td>${desc.slice(0, 30)}${desc.length > 30 ? '...' : ''}</td>
+            <td>${categoryName}</td>
+            <td>${p.price ? '$' + p.price.toLocaleString() : ''}</td>
+            <td>${p.rating || ''}</td>
+            <td>${tagsHtml}</td>
+            <td>${featuresHtml}</td>
+            <td>${p.order}</td>
+            <td>
+              <button class="btn btn-secondary" onclick="editProduct('${key}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+          
+          productsList.appendChild(row);
+        });
+        
+      } catch (error) {
+        console.error('خطأ في عرض الجدول:', error);
+        showAlert('حدث خطأ أثناء تحميل البيانات', 'error');
+      }
+    }
+
+    // إضافة/تحديث منتج
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      
+      // التحقق من وجود قسم
+      if (!document.getElementById('projCategory').value) {
+        showAlert('الرجاء اختيار قسم للمنتج', 'error');
+        return;
+      }
+      
+      // إنشاء كائن المنتج
+      const payload = {
+        category: document.getElementById('projCategory').value,
+        title: {
+          ar: document.getElementById('projTitleAr').value.trim(),
+          en: document.getElementById('projTitleEn').value.trim()
+        },
+        description: {
+          ar: document.getElementById('projDescAr').value.trim(),
+          en: document.getElementById('projDescEn').value.trim()
+        },
+        tags: {
+          ar: document.getElementById('tagsAr').value.split(',').map(t => t.trim()).filter(t => t),
+          en: document.getElementById('tagsEn').value.split(',').map(t => t.trim()).filter(t => t)
+        },
+        features: {
+          ar: document.getElementById('featuresAr').value.split(',').map(t => t.trim()).filter(t => t),
+          en: document.getElementById('featuresEn').value.split(',').map(t => t.trim()).filter(t => t)
+        },
+        price: parseFloat(document.getElementById('projPrice').value) || 0,
+        rating: parseFloat(document.getElementById('projRating').value) || 0,
+        color: document.getElementById('projColor').value,
+        textColor: document.getElementById('projTextColor').value,
+        order: parseInt(document.getElementById('projOrder').value) || 0,
+        images: [...currentImages]
+      };
+      
+      try {
+        if (currentKey) {
+          // تحديث المنتج الموجود
+          await update(child(productsRef, currentKey), payload);
+          showAlert('تم تحديث المنتج بنجاح');
+          
+          // حذف الصور التي تم إزالتها أثناء التعديل
+          if (imagesToDelete.length > 0) {
+            await deleteImages(imagesToDelete);
+            imagesToDelete = [];
+          }
+        } else {
+          // إضافة منتج جديد
+          await push(productsRef, payload);
+          showAlert('تم إضافة المنتج بنجاح');
+        }
+        
+        // إعادة تعيين النموذج
+        resetForm();
+        renderTable();
+        
+      } catch (error) {
+        console.error('خطأ في الحفظ:', error);
+        showAlert('حدث خطأ: ' + error.message, 'error');
+      }
+    });
+
+    // إلغاء التعديل
+    cancelBtn.addEventListener('click', () => {
+      resetForm();
+      showAlert('تم إلغاء التعديل');
+    });
+
+    // معالجة إسقاط الملفات
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#27ae60';
+      uploadArea.style.backgroundColor = '#e8f4fc';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.borderColor = '#3498db';
+      uploadArea.style.backgroundColor = '#f8f9fa';
+    });
+
+    uploadArea.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#3498db';
+      uploadArea.style.backgroundColor = '#f8f9fa';
+      
+      const files = e.dataTransfer.files;
+      if (files.length === 0) return;
+      
+      const uploadedImages = await uploadImages(files);
+      currentImages = [...currentImages, ...uploadedImages];
+      displayImagePreview(currentImages);
+    });
+
+    // معالجة اختيار الملفات
+    browseBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async function() {
+      if (this.files.length === 0) return;
+      
+      const uploadedImages = await uploadImages(this.files);
+      currentImages = [...currentImages, ...uploadedImages];
+      displayImagePreview(currentImages);
+      this.value = '';
+    });
+
+    // التهيئة الأولية
+    window.addEventListener('DOMContentLoaded', () => {
+      populateCategories();
+      renderTable();
+    });
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

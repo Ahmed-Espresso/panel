@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - الروبوت</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+<div class="container">
+  <section class="form-container">
+    <h1><i class="fas fa-comments"></i> إدارة ردود الروبوت</h1>
+    <form id="responseForm">
+      <!-- السؤال بالعربي -->
+      <div class="form-group">
+        <label for="botQuestionAr">نص السؤال (AR):</label>
+        <input type="text" id="botQuestionAr" class="form-control" placeholder="مثال: ما هي الخدمات؟" required>
+      </div>
+      <!-- السؤال بالإنجليزي -->
+      <div class="form-group">
+        <label for="botQuestionEn">Bot Question (EN):</label>
+        <input type="text" id="botQuestionEn" class="form-control" placeholder="e.g. What are your services?" required>
+      </div>
+
+      <!-- الجواب بالعربي -->
+      <div class="form-group">
+        <label for="botAnswerAr">الإجابة (AR):</label>
+        <textarea id="botAnswerAr" class="form-control" rows="3" placeholder="الإجابة التفصيلية..." required></textarea>
+      </div>
+      <!-- الجواب بالإنجليزي -->
+      <div class="form-group">
+        <label for="botAnswerEn">Bot Answer (EN):</label>
+        <textarea id="botAnswerEn" class="form-control" rows="3" placeholder="Detailed answer..." required></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="botCategory">التصنيف:</label>
+          <select id="botCategory" class="form-control" required>
+            <option value="general">عام</option>
+            <option value="welcome">ترحيبية</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="botOrder">ترتيب الظهور:</label>
+          <input type="number" id="botOrder" class="form-control" min="1" value="1" title="للقسم الترحيبي فقط">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="botKeywords">الكلمات المفتاحية:</label>
+        <input type="text" id="botKeywords" class="form-control" placeholder="خدمة, عروض, منتجات">
+        <small>افصل الكلمات بفواصل</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 حفظ</button>
+        <button type="button" id="cancelResponseEdit" class="btn btn-secondary hidden-element">إلغاء</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-container">
+    <h2>📋 قائمة الردود</h2>
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">الكل</button>
+      <button class="filter-btn" data-filter="welcome">فقط ترحيبية</button>
+    </div>
+    <table id="responsesTable">
+      <thead>
+        <tr>
+          <th>السؤال AR / EN</th>
+          <th>الإجابة AR / EN</th>
+          <th>تصنيف</th>
+          <th>ترتيب</th>
+          <th>الكلمات المفتاحية</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getDatabase, ref, push, onValue, child, get, set, remove
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const responsesRef = ref(db, 'storeBotResponses');
+
+    // DOM elements
+    const form       = document.getElementById('responseForm');
+    const cancelBtn  = document.getElementById('cancelResponseEdit');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    let editKey = null;
+
+    // render table
+    onValue(responsesRef, snap => {
+      const data = snap.val() || {};
+      const tbody = document.querySelector('#responsesTable tbody');
+      tbody.innerHTML = '';
+      Object.entries(data)
+        .sort(([,a],[,b]) => (a.order||0)-(b.order||0))
+        .forEach(([key, r]) => {
+          const tr = document.createElement('tr');
+          tr.dataset.category = r.category;
+          tr.innerHTML = `
+            <td>${r.question.ar} / ${r.question.en}</td>
+            <td>${r.response.ar} / ${r.response.en}</td>
+            <td>${r.category}</td>
+            <td>${r.category==='welcome'?r.order:'-'}</td>
+            <td>${(r.keywords||[]).join(', ')}</td>
+            <td>
+              <button class="btn btn-secondary" onclick="startEdit('${key}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-danger" onclick="confirmDelete('${key}')"><i class="fas fa-trash"></i></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+    });
+
+    // form submit
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        question: {
+          ar: document.getElementById('botQuestionAr').value.trim(),
+          en: document.getElementById('botQuestionEn').value.trim()
+        },
+        response: {
+          ar: document.getElementById('botAnswerAr').value.trim(),
+          en: document.getElementById('botAnswerEn').value.trim()
+        },
+        category: document.getElementById('botCategory').value,
+        order: document.getElementById('botCategory').value==='welcome'
+             ? parseInt(document.getElementById('botOrder').value,10) : null,
+        keywords: document.getElementById('botKeywords').value
+                  .split(',').map(k=>k.trim()).filter(Boolean)
+      };
+      // push or set
+      if (editKey) {
+        await set(child(responsesRef, editKey), payload);
+        Swal.fire('تم التحديث','✅','success');
+      } else {
+        await push(responsesRef, payload);
+        Swal.fire('تم الإضافة','🎉','success');
+      }
+      form.reset(); cancelBtn.style.display='none'; editKey=null;
+    });
+
+    // start edit
+    window.startEdit = async key => {
+      const snap = await get(child(responsesRef, key));
+      const r = snap.val();
+      document.getElementById('botQuestionAr').value = r.question.ar;
+      document.getElementById('botQuestionEn').value = r.question.en;
+      document.getElementById('botAnswerAr').value   = r.response.ar;
+      document.getElementById('botAnswerEn').value   = r.response.en;
+      document.getElementById('botCategory').value   = r.category;
+      document.getElementById('botOrder').value      = r.order||1;
+      document.getElementById('botKeywords').value   = (r.keywords||[]).join(', ');
+      cancelBtn.style.display = 'inline-block';
+      editKey = key;
+    };
+
+    // delete
+    window.confirmDelete = key => {
+      Swal.fire({
+        title: 'تأكيد الحذف؟',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'نعم',
+        cancelButtonText: 'إلغاء'
+      }).then(res => {
+        if (res.isConfirmed) {
+          remove(child(responsesRef, key));
+          Swal.fire('تم الحذف','✅','success');
+        }
+      });
+    };
+
+    // cancel edit
+    cancelBtn.addEventListener('click', ()=> {
+      form.reset(); cancelBtn.style.display='none'; editKey=null;
+    });
+
+    // filtering
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', ()=>{
+        filterBtns.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('#responsesTable tbody tr')
+          .forEach(tr => {
+            tr.style.display = (filter==='all' || tr.dataset.category===filter)
+                             ? '' : 'none';
+          });
+      });
+    });
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>

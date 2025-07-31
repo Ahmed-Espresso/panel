@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - الترجمة</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul class="navbar-admin">
+        <li><a href="index.html" class="active"><i class="fas fa-home"></i> رسالة ترحيب</a></li>
+        <li><a href="category.html"><i class="fas fa-list"></i> الأقسام</a></li>
+        <li><a href="product.html"><i class="bi bi-box-seam"></i> المنتجات</a></li>
+        <li><a href="time.html"><i class="bi bi-tags-fill"></i> العروض</a></li>
+        <li><a href="bot.html"><i class="fas fa-robot"></i> الشات</a></li>
+        <li><a href="who.html"><i class="bi bi-book-half"></i>  قصتنا</a></li>
+        <li><a href="contact.html"><i class="fas fa-address-book"></i> التواصل</a></li>
+        <li><a href="stats.html"><i class="bi bi-bar-chart-line-fill"></i>احصائيات</a></li>
+        <li><a href="serv.html"><i class="bi bi-gear-fill"></i> الخدمات</a></li>
+        <li><a href="faq.html"><i class="bi bi-question-circle-fill"></i> سؤال وجواب</a></li>
+        <li><a href="customer.html"><i class="fas fa-bolt"></i> خدمه العملاء</a></li>
+        <li><a href="translation.html"><i class="fas fa-language"></i> الترجمه</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="form-container">
+      <h1><i class="fas fa-globe"></i> إدارة الترجمات</h1>
+      <form id="translationForm">
+        <div class="form-group">
+          <label for="transKey">المفتاح:</label>
+          <input type="text" id="transKey" class="form-control" placeholder="مثل: welcome_message" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="transAr">النص العربي:</label>
+          <input type="text" id="transAr" class="form-control" placeholder="أدخل النص العربي" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="transEn">النص الإنجليزي:</label>
+          <input type="text" id="transEn" class="form-control" placeholder="Enter the English text" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ الترجمة</button>
+          <button type="button" id="cancelTransEdit" class="btn btn-secondary" style="display:none;"><i class="fas fa-times"></i> إلغاء</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-container">
+      <h2><i class="fas fa-list"></i> الترجمات الحالية</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>المفتاح</th>
+            <th>العربي</th>
+            <th>الإنجليزي</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="translationsList"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getDatabase, ref, push, onValue, 
+      update, remove, child, get, set 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtqvEzoqQoCtHS_wvc5mAzb5WKOW1MaeI",
+      authDomain: "realestate-d4e29.firebaseapp.com",
+      databaseURL: "https://realestate-d4e29-default-rtdb.firebaseio.com",
+      projectId: "realestate-d4e29",
+      storageBucket: "realestate-d4e29.appspot.com",
+      messagingSenderId: "341854632202",
+      appId: "1:341854632202:web:7666024e83d2b9c94962f3"
+    };
+    
+    const app = initializeApp(firebaseConfig);  
+    const db = getDatabase(app);
+    const transRef = ref(db, 'translate');
+
+    const form = document.getElementById('translationForm');
+    const translationsList = document.getElementById('translationsList');
+    const cancelBtn = document.getElementById('cancelTransEdit');
+    let currentTransKey = null;
+
+    // Render translations
+    function renderTranslations(snapshot) {
+      translationsList.innerHTML = '';
+      const translations = snapshot.val() || {};
+
+      Object.entries(translations).forEach(([key, trans]) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${key}</td>
+          <td>${trans.ar}</td>
+          <td>${trans.en}</td>
+          <td>
+            <button class="btn btn-secondary" onclick="editTranslation('${key}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger" onclick="deleteTranslation('${key}')"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        translationsList.appendChild(row);
+      });
+    }
+
+    onValue(transRef, renderTranslations);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const key = document.getElementById('transKey').value.trim();
+      const arText = document.getElementById('transAr').value.trim();
+      const enText = document.getElementById('transEn').value.trim();
+
+      if (!key || !arText || !enText) {
+        alert('❗ الرجاء تعبئة جميع الحقول');
+        return;
+      }
+
+      const translationData = { 
+        ar: arText,
+        en: enText 
+      };
+
+      try {
+        if (currentTransKey) {
+          await update(child(transRef, currentTransKey), translationData);
+          alert('✅ تم تحديث الترجمة بنجاح');
+        } else {
+          const keyExists = (await get(child(transRef, key))).exists();
+          if (keyExists) {
+            alert('❗ هذا المفتاح موجود مسبقاً');
+            return;
+          }
+          await set(ref(db, `translate/${key}`), translationData);
+          alert('✅ تمت إضافة الترجمة بنجاح');
+        }
+        resetForm();
+      } catch (error) {
+        alert(`❌ حدث خطأ: ${error.message}`);
+      }
+    });
+
+    window.editTranslation = async (key) => {
+      const snapshot = await get(child(transRef, key));
+      const trans = snapshot.val();
+
+      document.getElementById('transKey').value = key;
+      document.getElementById('transAr').value = trans.ar;
+      document.getElementById('transEn').value = trans.en;
+      
+      currentTransKey = key;
+      document.getElementById('transKey').disabled = true;
+      cancelBtn.style.display = 'inline-block';
+    };
+
+    window.deleteTranslation = async (key) => {
+      if (confirm('هل تريد حذف هذه الترجمة بشكل دائم؟')) {
+        await remove(child(transRef, key));
+      }
+    };
+
+    function resetForm() {
+      form.reset();
+      document.getElementById('transKey').disabled = false;
+      currentTransKey = null;
+      cancelBtn.style.display = 'none';
+    }
+
+    cancelBtn.addEventListener('click', resetForm);
+  </script>
+  <script>
+    // كود JavaScript لتمييز الصفحة النشطة
+    document.addEventListener('DOMContentLoaded', function() {
+      // الحصول على جميع روابط القائمة
+      const links = document.querySelectorAll('.navbar-admin a');
+      // الحصول على المسار الحالي (مثل '/category.html')
+      const currentPath = window.location.pathname;
+      // استخراج اسم الملف من المسار
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // البحث عن الرابط الذي يحتوي على سمة href تنتهي باسم الملف الحالي
+      links.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // إذا تطابق اسم الملف الحالي مع اسم الملف في الرابط
+        if (currentPage === linkPage) {
+          // إزالة الكلاس النشط من جميع الروابط
+          links.forEach(l => l.classList.remove('active'));
+          // إضافة الكلاس النشط للرابط الحالي
+          link.classList.add('active');
+        }
+      });
+      
+      // إضافة رسالة في وحدة التحكم لتوضيح العملية
+      console.log(`الصفحة الحالية: ${currentPage}`);
+      console.log('تم تمييز الرابط النشط بنجاح!');
+    });
+  </script>
+</body>
+</html>
